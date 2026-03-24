@@ -44,12 +44,19 @@ python main.py
 
 ### 1. Feature Matching (Frontend)
 
-![Feature Matching](results/matching_demo.png)
+<p align="center">
+  <img src="results/matching_demo.png" width="80%" alt="Feature Matching">
+  <br>
+  <em>Figure 1: ORB Feature Matching between consecutive frames.</em>
+</p>
 
 ### 2. Trajectory Comparison (Estimated vs. Ground Truth)
 
-![Trajectory Result](results/trajectory_00.png)
-
+<p align="center">
+  <img src="results/trajectory_00.png" width="65%" alt="Trajectory Result">
+  <br>
+  <em>Figure 2: Estimated Trajectory (Red) vs Ground Truth (Blue) on KITTI Sequence 00.</em>
+</p>
 ## 📈 Error Analysis & Drift
 
 As a purely monocular visual odometry system without backend optimization (like Bundle Adjustment or loop closure), scale drift and translation error naturally accumulate over long distances. This is a fundamental challenge in visual SLAM. Future work will focus on integrating deep-learning-based feature matching (e.g., SuperGlue) to improve frontend robustness and mitigate drift.
