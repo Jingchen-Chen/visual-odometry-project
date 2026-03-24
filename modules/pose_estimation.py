@@ -9,19 +9,29 @@ class PoseEstimator:
                           [0.0, 0.0, 1.0]])
 
     def estimate_pose(self, kp1, kp2, matches):
-        # Extract 2D coordinates of matched points
+        if len(matches) < 30:
+            return None, None  # caller must handle this
+
         pts1 = np.float32([kp1[m.queryIdx].pt for m in matches])
         pts2 = np.float32([kp2[m.trainIdx].pt for m in matches])
 
-        # Compute Essential Matrix E
-        E, mask = cv2.findEssentialMat(pts1, pts2, self.K, method=cv2.RANSAC, prob=0.999, threshold=0.5)
+        E, mask = cv2.findEssentialMat(pts1, pts2, self.K,
+                                       method=cv2.RANSAC, prob=0.999, threshold=0.5)
+        if E is None:
+            return None, None
 
-        # Recover pose (Rotation and Translation)
-        _, R, t, mask = cv2.recoverPose(E, pts1, pts2, self.K, mask=mask)
+        inliers, R, t, mask = cv2.recoverPose(E, pts1, pts2, self.K, mask=mask)
+        if inliers < 20:
+            return None, None  # too few inliers, skip frame
 
-        # 🔴 Core Correction: Matrix Inversion
-        # OpenCV returns the transformation from 1 to 2. 
-        # We need the pose of frame 2 relative to the coordinate system of frame 1.
+        # cv2.recoverPose returns R, t such that:
+        #   X_cam2 = R @ X_cam1 + t
+        # This is the transform FROM world TO camera2 (i.e. the camera moved).
+        # For trajectory integration we need the camera's motion in world coordinates,
+        # i.e. the pose of camera2 expressed in camera1's frame:
+        #   P_world2 = P_world1 + R1 * t_rel  →  t_rel = R.T @ (-t), R_rel = R.T
+        # This converts from "how the world moved relative to camera" to
+        # "how the camera moved relative to the world".
         R_rel = R.T
         t_rel = -R.T @ t
 
