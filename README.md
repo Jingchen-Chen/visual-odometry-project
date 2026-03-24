@@ -40,8 +40,6 @@ python main.py
 
 ## 📊 Results
 
-*(Result images will be uploaded here once the evaluation on KITTI sequence 00 is complete)*
-
 ### 1. Feature Matching (Frontend)
 
 <p align="center">
