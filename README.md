@@ -57,6 +57,7 @@ python main.py
   <br>
   <em>Figure 2: Estimated Trajectory (Red) vs Ground Truth (Blue) on KITTI Sequence 00.</em>
 </p>
+
 ## 📈 Error Analysis & Drift
 
 As a purely monocular visual odometry system without backend optimization (like Bundle Adjustment or loop closure), scale drift and translation error naturally accumulate over long distances. This is a fundamental challenge in visual SLAM. Future work will focus on integrating deep-learning-based feature matching (e.g., SuperGlue) to improve frontend robustness and mitigate drift.
