@@ -57,24 +57,22 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Results are saved to the `results/` directory.
-
 ## 📊 Results
 
 ### 1. Feature Matching (Frontend)
 
 <p align="center">
-  <img src="results/matching_demo.png" width="80%" alt="Feature Matching">
-  <br>
-  <em>Figure 1: GFTT+ORB feature matching between consecutive frames (top 50 shown).</em>
+   <img src="results/matching_demo.gif" width="85%" alt="Feature Matching Animation" />
+     <br>
+  <em>Figure 1: Animated GFTT+ORB feature matching demonstration between consecutive frames.</em>
 </p>
 
 ### 2. Trajectory Comparison (Estimated vs. Ground Truth)
 
 <p align="center">
-  <img src="results/trajectory_00.png" width="65%" alt="Trajectory Result">
+  <img src="results/trajectory_00.gif" width="70%" />
   <br>
-  <em>Figure 2: Estimated trajectory (red dashed) vs. ground truth (blue) on KITTI Sequence 00. Strong alignment is maintained throughout the majority of the ~3.7 km route.</em>
+  <em>Figure 2: Real-time trajectory propagation (red dashed) vs. ground truth (blue) on KITTI Sequence 00. Strong alignment is maintained throughout the majority of the ~3.7 km route.</em>
 </p>
 
 ## 📈 Error Analysis & Drift

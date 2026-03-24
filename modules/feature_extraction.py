@@ -3,19 +3,16 @@ import numpy as np
 
 class FeatureExtractor:
     def __init__(self):
-        # Initialize ORB detector
-        # nfeatures: 2000-3000 points are typically sufficient for Visual Odometry (VO)
-        self.orb = cv2.ORB_create(nfeatures=3000)
+        # GFTT finds corners robustly; ORB describes them
+        self.detector = cv2.GFTTDetector_create(
+            maxCorners=2000, qualityLevel=0.01,
+            minDistance=10, blockSize=3)
+        self.descriptor = cv2.ORB_create(nfeatures=2000)
 
     def extract_features(self, image):
-        """
-        Input: Grayscale image
-        Output: keypoints (coordinates), descriptors (feature vectors)
-        """
-        # Detect keypoints and compute descriptors
-        keypoints, descriptors = self.orb.detectAndCompute(image, None)
-        
-        return keypoints, descriptors
+        kp = self.detector.detect(image, None)
+        kp, des = self.descriptor.compute(image, kp)
+        return kp, des
 
     def draw_features(self, image, keypoints):
         """

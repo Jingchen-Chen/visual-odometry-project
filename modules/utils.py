@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+from matplotlib.animation import FuncAnimation, PillowWriter
 
 class VOPlotter:
     def __init__(self, gt_path):
@@ -63,7 +63,26 @@ class VOPlotter:
         plt.savefig(save_path)
         plt.close()
         print(f"✅ Trajectory plot successfully saved to: {save_path}")
+    
+    def save_trajectory_gif(self, save_path):
+        fig, ax = plt.subplots(figsize=(10, 8))
+        ax.plot(self.gt_x, self.gt_z, color='blue', linewidth=1, label='Ground Truth')
+        est_line, = ax.plot([], [], color='red', linestyle='--', linewidth=2, label='Estimated VO')
+        ax.set_xlim(min(self.gt_x)-10, max(self.gt_x)+10)
+        ax.set_ylim(min(self.gt_z)-10, max(self.gt_z)+10)
+        ax.set_title('Visual Odometry on KITTI Sequence 00', fontsize=15)
+        ax.set_xlabel('X (meters)'); ax.set_ylabel('Z (meters)')
+        ax.legend(); ax.grid(True)
 
+        def update(frame):
+            est_line.set_data(self.est_x[:frame], self.est_z[:frame])
+            return est_line,
+        step = 10
+        frames = range(0, len(self.est_x),step)
+        ani = FuncAnimation(fig, update, frames=frames, interval=20, blit=True)
+        ani.save(save_path, writer=PillowWriter(fps=30))
+        plt.close()
+        print(f"✅ Trajectory GIF saved to: {save_path}")
 
 def parse_gt_pose(gt_frame):
     """

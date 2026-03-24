@@ -21,7 +21,7 @@ def main():
     image_dir = "data/dataset/sequences/00/image_0/"
     save_plot_path = "results/trajectory_00.png"
     save_matching_path = "results/matching_demo.png" # For README visualization
-
+    save_matching_path = "results/matching_demo.gif"
     # ==============================
     # 1. Initialize Modules
     # ==============================
@@ -48,6 +48,10 @@ def main():
     num_frames = min(len(images), plotter.num_frames)
     print(f"✅ Found {num_frames} images and corresponding Ground Truth. Starting processing...")
 
+    matching_frames = []
+    capture_start_frame = 100
+    max_to_capture = 60
+
     # ==============================
     # 2. VO Loop Processing
     # ==============================
@@ -63,6 +67,8 @@ def main():
 
         # Pose estimation (Relative rotation R and translation t with unknown scale)
         R_rel, t_rel = pose_estimator.estimate_pose(kp1, kp2, matches)
+        if R_rel is None:
+            continue  # skip degenerate frame
         
         # ==========================================
         # 3. Core: Scale Correction (using Ground Truth)
@@ -99,16 +105,20 @@ def main():
         # Print progress
         if i % 100 == 0:
             print(f"Processing frame {i}/{num_frames}...")
-            # Save the first matching result for documentation
-            if i == 0:
-                matching_img = matcher.draw_matches(img1, kp1, img2, kp2, matches)
-                cv2.imwrite(save_matching_path, matching_img)
+            
+        if i >= capture_start_frame and len(matching_frames) < max_to_capture:
+            matching_img = matcher.draw_matches(img1, kp1, img2, kp2, matches)
+            matching_frames.append(matching_img)
 
     # ==============================
     # 5. Generate Results
     # ==============================
     plotter.save_trajectory_plot(save_plot_path)
     print("🏁 Processing finished. Please check the results/ directory for images.")
+    plotter.save_trajectory_gif("results/trajectory_00.gif")
+
+    if matching_frames:
+        matcher.save_matching_gif(matching_frames, save_matching_path)
 
 if __name__ == "__main__":
     main()
