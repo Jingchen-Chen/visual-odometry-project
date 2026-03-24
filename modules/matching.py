@@ -2,26 +2,27 @@ import cv2
 
 class FeatureMatcher:
     def __init__(self):
-        # 对于 ORB 这种二进制描述子，使用 Hamming 距离是最快的
-        self.bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+        # 注意：使用 KNN 匹配时，crossCheck 必须为 False
+        self.bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=False)
 
     def match_features(self, desc1, desc2):
         """
-        输入: 两张图各自的描述子
-        输出: 匹配结果
+        使用 KNN 和 Lowe's Ratio Test 进行高质量特征匹配
         """
-        # 进行暴力匹配
-        matches = self.bf.match(desc1, desc2)
+        # 寻找每个特征点最近的 2 个匹配点 (k=2)
+        matches = self.bf.knnMatch(desc1, desc2, k=2)
         
-        # 按照匹配距离排序（距离越短越匹配）
-        matches = sorted(matches, key=lambda x: x.distance)
+        good_matches = []
+        # Lowe's Ratio Test
+        for m, n in matches:
+            # 如果第一近的距离 小于 第二近距离的 75% (0.75 是经验法则)
+            # 说明这个匹配非常具有辨识度，不是容易混淆的重复纹理
+            if m.distance < 0.75 * n.distance:
+                good_matches.append(m)
         
-        return matches
+        return good_matches
 
     def draw_matches(self, img1, kp1, img2, kp2, matches):
-        """
-        画出前 N 个匹配点，检查是否有太多乱线（误匹配）
-        """
         match_img = cv2.drawMatches(img1, kp1, img2, kp2, matches[:50], None, 
                                     flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
         return match_img
