@@ -44,15 +44,11 @@ python main.py
 
 ### 1. Feature Matching (Frontend)
 
-```
 ![Feature Matching](results/matching_demo.png)
-```
 
 ### 2. Trajectory Comparison (Estimated vs. Ground Truth)
 
-```
 ![Trajectory Result](results/trajectory_00.png)
-```
 
 ## 📈 Error Analysis & Drift
 
