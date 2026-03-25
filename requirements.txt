@@ -1,6 +1,9 @@
 numpy
-opencv-python
+opencv-contrib-python
 matplotlib
 torch
 torchvision
 tqdm
+imageio
+imageio-ffmpeg
+scipy
